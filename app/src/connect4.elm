@@ -15,20 +15,31 @@ main =
 
 type alias Model = 
   {
-    board : List Int
+    buttons : List Int,
+    board : List (List CaseState)
   }
 
 init : Model
 init =
-  Model (List.range 1 42)
-
-nums : List Int
-nums = List.range 1 42
-
+  Model
+  [1, 2, 3, 4, 5, 6, 7] 
+  [
+    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
+    [Empty, Empty, Empty, Empty, Empty, Empty, Empty]
+  ]
 
 -- UPDATE
 
 type Msg = Increment
+
+type CaseState 
+  = Empty
+  | PlayerOne
+  | PlayerTwo
 
 update : Msg -> Model -> Model
 update msg model =
@@ -42,8 +53,16 @@ update msg model =
 view : Model -> Html Msg
 view model =
   div [ ]
-    [
-      ul []
-        (List.map (\l -> li [] [ text (String.fromInt l) ]) nums),
-      button [ onClick Increment ] [ text "+" ]
+    [ div
+        [ ]
+        (List.map(\i -> button [] [ text "button" ]) model.buttons)
+    , div 
+        [ class "gridContainer"
+        , style "display" "flex"
+        ]
+        (List.map (\l -> div 
+                            [class "column"]
+                            (List.map(\n -> div
+                                              [class "square"]
+                                              [text "ok"]) l)) model.board)
     ]
