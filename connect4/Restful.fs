@@ -12,7 +12,7 @@ module RestFul =
     open Suave.Filters
 
     type RestResource<'a> = {
-      GetAll : unit -> 'a seq
+      GetAll : unit -> 'a 
       Create : 'a -> 'a
     }
 
