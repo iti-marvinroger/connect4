@@ -1,7 +1,5 @@
 ﻿namespace connect4.Data
 
-open System.Collections.Generic
-
 type Pawn = 
 | Red
 | Yellow
@@ -12,17 +10,16 @@ type ListPawn =
 | Item of Pawn * ListPawn
 
 type State = {
+  CurrentPos: ListPawn
   Map: ListPawn
 }
 
 module Data =
-
-  let mutable private stateStorage = ListPawn(Empty)
-  let sendResult () =
-    stateStorage |> Seq.map (fun p -> p)
-
+  let mutable private stateStorage = Item(Red, Empty)
+  let sendResult () = stateStorage
   let getState state =
     let newState = {
+        CurrentPos = state.CurrentPos
         Map = state.Map
     }
     stateStorage <- newState.Map
