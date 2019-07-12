@@ -4,14 +4,12 @@ open Newtonsoft.Json
 open Newtonsoft.Json.Serialization
 open Suave
 open Suave.Operators
-open Suave.Http
 open Suave.Successful
-open Suave.RequestErrors
 open Suave.Filters
 
-type RestResource<'a> = {
-  Get : unit -> 'a 
-  Play : 'a -> 'a
+type RestActions = {
+  Get: unit -> Types.GameState
+  Play: Types.PlayMove -> Types.GameState
 }
 
 let JSON v =
@@ -35,7 +33,7 @@ let rest resourceName resource =
 
   path resourcePath >=> choose [
     GET >=> get
-    POST >=> request (getResourceFromReq >> resource.Play >> JSON)
+    POST >=> request (getResourceFromReq<Types.PlayMove> >> resource.Play >> JSON)
   ]
 
 

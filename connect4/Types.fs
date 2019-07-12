@@ -8,3 +8,19 @@ type Pawn =
 type BoardCell = Option<Pawn>
 type BoardColumn = array<BoardCell>
 type Board = array<BoardColumn>
+
+type GameStatus =
+    | Ongoing
+    | Won
+    | Draw
+
+type GameState = {
+    status: GameStatus;
+    board: Board;
+    lastPlayer: Option<Pawn>
+}
+
+type PlayMove = {
+    pawn: Pawn;
+    column: int;
+}
