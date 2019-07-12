@@ -1,15 +1,16 @@
-open connect4.Rest
-open connect4.Data
+open Connect4.Rest
+open Connect4.Data
 open System
 open Suave
 open Suave.Successful
 
 [<EntryPoint>]
 let main argv =
-  let personWebPart = rest "people" {
-    GetAll = Data.sendResult
-    Create = Data.getState
+  let boardWebPart = rest "board" {
+    Get = Data.getState
+    Play = Data.setState
   }
-  startWebServer defaultConfig personWebPart
+
+  startWebServer defaultConfig boardWebPart
   0
   

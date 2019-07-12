@@ -1,28 +1,8 @@
-module GameLogic
+module Connect4.GameLogic
 
-exception BadMoveError of string
+open Connect4.Types
 
-type Column = int
-type Row = int
-type Position = Column * Row
-
-type Player = 
-    | Red
-    | Yellow
-type BoardCell = Option<Player>
-type BoardColumn = array<BoardCell>
-type Board = array<BoardColumn>
-
-type Status = 
-    | Ongoing
-    | Stuck
-    | RedWon
-    | YellowWon
-
-type Game = {
-    Board: Board;
-    Status: Status
-}
+exception BadMoveException of string
 
 let initializeBoard cols rowsPerCol : Board =
     Array.create cols (Array.create rowsPerCol None)
@@ -33,35 +13,33 @@ let private countColumns (board: Board) : int =
 let private countRows (board : Board) : int =
     Array.length (board.[0])
 
-let initializeGame board : Game = { Board = board; Status = Ongoing }
-
 let private getColumn (board: Board) (x: int): BoardColumn = Array.get board x
 
-let private getPieceAt (board: Board) ((x, y): Position): Player option = board.[x].[y]
-let private setPieceAt (board: Board) ((x, y): Position) (player: Player): Board =
+let private getPawnAt (board: Board) ((x, y): Position): Pawn option = board.[x].[y]
+let private setPawnAt (board: Board) ((x, y): Position) (pawn: Pawn): Board =
     let column = Array.copy (getColumn board x)
-    Array.set column y (Some player)
+    Array.set column y (Some pawn)
     let board = Array.copy board
     Array.set board x column
 
     board
 
-let private getMatchingAdjacentPieces (board: Board) (player: Player) (deltaX: int, deltaY: int) (start: Position): int =
+let private getMatchingAdjacentPawns (board: Board) (pawn: Pawn) (deltaX: int, deltaY: int) (start: Position): int =
     let columnsCount = countColumns board
     let rowsCount = countRows board
     let nextPosition ((x, y): Position) = (x + deltaX, y + deltaY)
     let inBoard ((x, y): Position) = 0 <= x && x < columnsCount && 0 <= y && y < rowsCount
     let samePlayer (position: Position) = 
-        match getPieceAt board position with 
-        | Some x -> x = player
+        match getPawnAt board position with 
+        | Some x -> x = pawn
         | None -> false
     let rec moveAlong acc pos = if inBoard pos && samePlayer pos then moveAlong (acc + 1) (nextPosition pos) else acc
 
     start |> moveAlong 0 |> fun res -> res - 1
 
-let private checkIfMoveIsWinning (board: Board) (move: Position) (player: Player) =
+let private checkIfMoveIsWinning (board: Board) (move: Position) (pawn: Pawn) =
     let checkIfLineIsWinning (deltaXA: int, deltaYA: int) (deltaXB: int, deltaYB: int) =
-        let z (deltaX: int, deltaY: int) = getMatchingAdjacentPieces board player (deltaX, deltaY) move
+        let z (deltaX: int, deltaY: int) = getMatchingAdjacentPawns board pawn (deltaX, deltaY) move
         let a = z (deltaXA, deltaYA)
         let b = z (deltaXB, deltaYB)
 
@@ -83,37 +61,37 @@ let private checkIfMoveIsWinning (board: Board) (move: Position) (player: Player
         ((-1, 1), (1, -1)) // diag2
     ]
 
-let private canAddPieceToColumn (board: Board) (x: int) =
+let private canAddPawnToColumn (board: Board) (x: int) =
     let column = getColumn board x
     column.[0] = None
 
-let addPieceToColumn (board: Board) (columnX: int) (player: Player) =
+let addPawnToColumn (board: Board) (columnX: int) (pawn: Pawn) =
     match columnX < 0 || columnX > (countColumns board) - 1 with
-    | true -> raise (BadMoveError "This column does not exist")
+    | true -> raise (BadMoveException "This column does not exist")
     | _ -> ()
 
-    match canAddPieceToColumn board columnX with
+    match canAddPawnToColumn board columnX with
     | true ->
         let column = getColumn board columnX
-        let setPieceAndCheckWon (coord: Position) =
-            let board = setPieceAt board coord player
-            let won = checkIfMoveIsWinning board coord player
+        let setPawnAndCheckWon (coord: Position) =
+            let board = setPawnAt board coord pawn
+            let won = checkIfMoveIsWinning board coord pawn
 
             board, won
 
         let rec traverse position =
             match position with
-            | y when y = column.Length - 1 -> setPieceAndCheckWon (columnX, y)
+            | y when y = column.Length - 1 -> setPawnAndCheckWon (columnX, y)
             | _ ->
-                match getPieceAt board (columnX, (position + 1)) with
+                match getPawnAt board (columnX, (position + 1)) with
                 | None -> traverse (position + 1)
-                | _ -> setPieceAndCheckWon (columnX, position)
+                | _ -> setPawnAndCheckWon (columnX, position)
 
         traverse 0
-    | false -> raise (BadMoveError "This move is not possible")
+    | false -> raise (BadMoveException "This move is not possible")
 
-// let addAndLog (column: int) (player: Player) (board: Board) =
-//     let board, won = GameLogic.addPieceToColumn board column player
+// let addAndLog (column: int) (pawn: Pawn) (board: Board) =
+//     let board, won = GameLogic.addPawnToColumn board column pawn
 //     match won with
 //     | true -> printfn "Won"
 //     | false -> printfn "-"
