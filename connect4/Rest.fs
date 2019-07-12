@@ -7,6 +7,10 @@ open Suave.Operators
 open Suave.Successful
 open Suave.Filters
 
+type RestError = {
+    error: string
+}
+
 type RestActions = {
   Get: unit -> Types.GameState
   Play: Types.PlayMove -> Types.GameState
@@ -29,11 +33,18 @@ let getResourceFromReq<'a> (req : HttpRequest) =
 
 let rest resourceName resource =
   let resourcePath = "/" + resourceName
-  let get = warbler (fun _ -> resource.Get () |> JSON)
+  let handleGet = warbler (fun _ -> resource.Get () |> JSON)
+  let handlePost = request (fun r ->
+    try
+        let move = getResourceFromReq<Types.PlayMove> r
+        let result = resource.Play move
+        JSON result
+    with _ -> JSON { error = "Bad request" }
+  )
 
   path resourcePath >=> choose [
-    GET >=> get
-    POST >=> request (getResourceFromReq<Types.PlayMove> >> resource.Play >> JSON)
+    GET >=> handleGet
+    POST >=> handlePost
   ]
 
 

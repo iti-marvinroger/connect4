@@ -7,7 +7,7 @@ exception BadMoveException of string
 let private initializeBoard cols rowsPerCol : Board =
     Array.create cols (Array.create rowsPerCol None)
 
-let initializeGame cols rows = { status = Ongoing; board = initializeBoard cols rows; lastPlayer = None }
+let initializeGame cols rows = { status = GameStatus.Ongoing; board = initializeBoard cols rows; lastPlayer = Pawn.None }
 
 let private countColumns (board: Board) : int =
     Array.length board
@@ -28,10 +28,10 @@ let private isFull (board: Board) =
 
     checkColumns (Array.toList board)
 
-let private getPawnAt (board: Board) ((x, y): Position): Pawn option = board.[x].[y]
+let private getPawnAt (board: Board) ((x, y): Position): Pawn = board.[x].[y]
 let private setPawnAt (board: Board) ((x, y): Position) (pawn: Pawn): Board =
     let column = Array.copy (getColumn board x)
-    Array.set column y (Some pawn)
+    Array.set column y pawn
     let board = Array.copy board
     Array.set board x column
 
@@ -42,10 +42,8 @@ let private getMatchingAdjacentPawns (board: Board) (pawn: Pawn) (deltaX: int, d
     let rowsCount = countRows board
     let nextPosition ((x, y): Position) = (x + deltaX, y + deltaY)
     let inBoard ((x, y): Position) = 0 <= x && x < columnsCount && 0 <= y && y < rowsCount
-    let samePlayer (position: Position) = 
-        match getPawnAt board position with 
-        | Some x -> x = pawn
-        | None -> false
+    let samePlayer (position: Position) = getPawnAt board position = pawn 
+
     let rec moveAlong acc pos = if inBoard pos && samePlayer pos then moveAlong (acc + 1) (nextPosition pos) else acc
 
     start |> moveAlong 0 |> fun res -> res - 1
@@ -78,9 +76,9 @@ let private getStatusAfterMove (board: Board) (move: Position) (pawn: Pawn) =
     let isBoardFull = isFull board
 
     match true with
-    | x when x = isWin -> Won
-    | x when x = isBoardFull -> Draw
-    | _ -> Ongoing
+    | x when x = isWin -> GameStatus.Won
+    | x when x = isBoardFull -> GameStatus.Draw
+    | _ -> GameStatus.Ongoing
 
 let private canAddPawnToColumn (board: Board) (x: int) =
     let column = getColumn board x
@@ -91,12 +89,12 @@ let addPawnToColumn (state: GameState) (move: PlayMove) =
     | true -> raise (BadMoveException "This column does not exist")
     | _ -> ()
 
-    match state.status = Ongoing with
+    match state.status = GameStatus.Ongoing with
     | false -> raise (BadMoveException "The game is over")
     | _ -> ()
 
 
-    match state.lastPlayer = Some move.pawn with
+    match state.lastPlayer = move.pawn with
     | true -> raise (BadMoveException "The player cannot play twice")
     | _ -> ()
 
@@ -107,7 +105,7 @@ let addPawnToColumn (state: GameState) (move: PlayMove) =
             let board = setPawnAt state.board coord move.pawn
             let status = getStatusAfterMove board coord move.pawn
 
-            { board = board; status = status; lastPlayer = Some move.pawn }
+            { board = board; status = status; lastPlayer = move.pawn }
 
         let rec traverse position =
             match position with
