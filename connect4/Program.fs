@@ -8,11 +8,11 @@ open Connect4.Data
 [<EntryPoint>]
 let main argv =
   let boardWebPart = Rest.rest "board" {
-    Get = fun () -> Data.getState
+    Get = fun () -> Data.getState ()
     Play = fun move ->
-        let storedGameState = Data.getState
+        let storedGameState = Data.getState ()
 
-        let newGameState = GameLogic.addPawnToColumn storedGameState.board move
+        let newGameState = GameLogic.addPawnToColumn storedGameState move
 
         Data.setState newGameState
   }

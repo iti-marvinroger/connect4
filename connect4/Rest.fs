@@ -35,7 +35,7 @@ let rest resourceName resource =
 
   path resourcePath >=> choose [
     GET >=> get
-    POST >=> request (getResourceFromReq >> resource.Play >> JSON)
+    POST >=> request (getResourceFromReq<Types.PlayMove> >> resource.Play >> JSON)
   ]
 
 
