@@ -2,17 +2,11 @@
 
 open Connect4.Types
 
-type State = {
-  board: Board
-}
-
 module Data =
-  let mutable private stateStorage = { board = GameLogic.initializeBoard 7 6 }
+  let mutable private stateStorage = { won = false; board = GameLogic.initializeBoard 7 6 }
 
-  let getState () = stateStorage
+  let getState = stateStorage
   let setState state =
-    let newState = {
-        board = state.board
-    }
-    stateStorage <- newState
-    newState
+    stateStorage <- state
+
+    state

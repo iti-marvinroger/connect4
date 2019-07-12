@@ -65,27 +65,27 @@ let private canAddPawnToColumn (board: Board) (x: int) =
     let column = getColumn board x
     column.[0] = None
 
-let addPawnToColumn (board: Board) (columnX: int) (pawn: Pawn) =
-    match columnX < 0 || columnX > (countColumns board) - 1 with
+let addPawnToColumn (board: Board) (move: PlayMove) =
+    match move.column < 0 || move.column > (countColumns board) - 1 with
     | true -> raise (BadMoveException "This column does not exist")
     | _ -> ()
 
-    match canAddPawnToColumn board columnX with
+    match canAddPawnToColumn board move.column with
     | true ->
-        let column = getColumn board columnX
+        let column = getColumn board move.column
         let setPawnAndCheckWon (coord: Position) =
-            let board = setPawnAt board coord pawn
-            let won = checkIfMoveIsWinning board coord pawn
+            let board = setPawnAt board coord move.pawn
+            let won = checkIfMoveIsWinning board coord move.pawn
 
-            board, won
+            { board = board; won = won }
 
         let rec traverse position =
             match position with
-            | y when y = column.Length - 1 -> setPawnAndCheckWon (columnX, y)
+            | y when y = column.Length - 1 -> setPawnAndCheckWon (move.column, y)
             | _ ->
-                match getPawnAt board (columnX, (position + 1)) with
+                match getPawnAt board (move.column, (position + 1)) with
                 | None -> traverse (position + 1)
-                | _ -> setPawnAndCheckWon (columnX, position)
+                | _ -> setPawnAndCheckWon (move.column, position)
 
         traverse 0
     | false -> raise (BadMoveException "This move is not possible")

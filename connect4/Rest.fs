@@ -9,9 +9,9 @@ open Suave.Successful
 open Suave.RequestErrors
 open Suave.Filters
 
-type RestResource<'a> = {
-  Get : unit -> 'a 
-  Play : 'a -> 'a
+type RestActions = {
+  Get: unit -> Types.GameState
+  Play: Types.PlayMove -> Types.GameState
 }
 
 let JSON v =
