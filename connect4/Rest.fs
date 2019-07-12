@@ -6,6 +6,7 @@ open Suave
 open Suave.Operators
 open Suave.Successful
 open Suave.Filters
+open Suave.Writers
 
 type RestError = {
     error: string
@@ -43,10 +44,20 @@ let rest resource =
     with _ -> JSON { error = "Bad request" }
   )
 
+  let setCORSHeaders =
+    addHeader  "Access-Control-Allow-Origin" "*" 
+    >=> addHeader "Access-Control-Allow-Headers" "content-type" 
+    >=> addHeader "Access-Control-Allow-Methods" "GET,OPTIONS,POST,DELETE" 
+
+  let allowCors : WebPart = fun context ->
+    context |> (
+        setCORSHeaders )
+
   path "/board" >=> choose [
-    GET >=> handleGet
-    POST >=> handlePost
-    DELETE >=> handleDelete
+    GET >=> allowCors >=> handleGet
+    POST >=> allowCors >=> handlePost
+    DELETE >=> allowCors >=> handleDelete
+    OPTIONS >=> allowCors >=> JSON { error = "For CORS" }
   ]
 
 
