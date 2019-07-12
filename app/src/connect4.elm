@@ -27,8 +27,8 @@ init =
   [0, 1, 2, 3, 4, 5, 6] 
   [
     [ Empty, Empty, Empty, Empty, Empty, Empty ],
-    [ Empty, Empty, Empty, Empty, Empty, Empty ],
-    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ PlayerOne, Empty, Empty, Empty, Empty, Empty ],
+    [ PlayerTwo, Empty, Empty, Empty, Empty, Empty ],
     [ Empty, Empty, Empty, Empty, Empty, Empty ],
     [ Empty, Empty, Empty, Empty, Empty, Empty ],
     [ Empty, Empty, Empty, Empty, Empty, Empty ],
@@ -51,6 +51,16 @@ type CaseState
   | PlayerOne
   | PlayerTwo
 
+caseString : CaseState -> String
+caseString caseState = 
+  case caseState of 
+    Empty -> 
+      "Empty"
+    PlayerOne -> 
+      "PlayerOne"
+    PlayerTwo -> 
+      "PlayerTwo"
+
 update : Msg -> Model -> Model
 update msg model =
   case msg of
@@ -64,8 +74,10 @@ update msg model =
                   Debug.log(String.fromInt(id))
                   model
                 PlayerOne ->
+                  Debug.log("PlayerOne")
                   model
                 PlayerTwo ->
+                  Debug.log("PlayerTwo")
                   model
             Nothing ->
               model
@@ -78,7 +90,7 @@ view : Model -> Html Msg
 view model =
   div [ ]
     [ div
-        [ ]
+        [ class "buttons" ]
         (List.map(\i -> button [ onClick (AddPawn i) ] [ text (String.fromInt i) ]) model.buttons)
     , div 
         [ class "gridContainer"
@@ -87,15 +99,11 @@ view model =
         (List.map (\l -> div 
                             [ class "column" ]
                             (List.map(\n -> div
-                                              [ if n == Empty then
-                                                  class "E"
-                                                else
-                                                  class "N"
+                                              [ 
+                                                class (caseString n)
                                               ]
-                                              [ if n == Empty then
-                                                  text "E"
-                                                else
-                                                  text "N"
+                                              [ 
+                                                text (caseString n)
                                               ]) l)
                                           
           ) model.board)
