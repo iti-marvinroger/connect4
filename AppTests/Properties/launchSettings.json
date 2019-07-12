@@ -1,0 +1,7 @@
+{
+  "profiles": {
+    "Connect4.Tests": {
+      "commandName": "Executable"
+    }
+  }
+}
