@@ -1,4 +1,5 @@
 import Browser
+import Array
 import Html exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
@@ -16,7 +17,7 @@ main =
 type alias Model = 
   {
     buttons : List Int,
-    board : List (List CaseState)
+    board : List (List Case)
   }
 
 init : Model
@@ -24,17 +25,25 @@ init =
   Model
   [1, 2, 3, 4, 5, 6, 7] 
   [
-    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-    [Empty, Empty, Empty, Empty, Empty, Empty, Empty],
-    [Empty, Empty, Empty, Empty, Empty, Empty, Empty]
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
+    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }]
   ]
 
 -- UPDATE
 
-type Msg = Increment
+type Msg 
+  = AddPawn Int
+  
+
+type alias Case =
+  { state : CaseState
+  , id : Int
+  }
 
 type CaseState 
   = Empty
@@ -44,9 +53,8 @@ type CaseState
 update : Msg -> Model -> Model
 update msg model =
   case msg of
-    Increment ->
+    AddPawn id ->
       model
-
 
 -- VIEW   
 
@@ -55,14 +63,24 @@ view model =
   div [ ]
     [ div
         [ ]
-        (List.map(\i -> button [] [ text "button" ]) model.buttons)
+        (List.map(\i -> button [ onClick (AddPawn i) ] [ text (String.fromInt i) ]) model.buttons)
     , div 
         [ class "gridContainer"
         , style "display" "flex"
         ]
         (List.map (\l -> div 
-                            [class "column"]
+                            [ class "column" ]
                             (List.map(\n -> div
-                                              [class "square"]
-                                              [text "ok"]) l)) model.board)
+                                              [ if n.state == Empty then
+                                                  class "E"
+                                                else
+                                                  class "N"
+                                              ]
+                                              [ if n.state == Empty then
+                                                  text "E"
+                                                else
+                                                  text "N"
+                                              ]) l)
+                                          
+          ) model.board)
     ]
