@@ -14,6 +14,7 @@ type RestError = {
 type RestActions = {
   Get: unit -> Types.GameState
   Play: Types.PlayMove -> Types.GameState
+  Reset: unit -> Types.GameState
 }
 
 let JSON v =
@@ -31,9 +32,9 @@ let getResourceFromReq<'a> (req : HttpRequest) =
     System.Text.Encoding.UTF8.GetString(rawForm)
   req.rawForm |> getString |> fromJson<'a>
 
-let rest resourceName resource =
-  let resourcePath = "/" + resourceName
+let rest resource =
   let handleGet = warbler (fun _ -> resource.Get () |> JSON)
+  let handleDelete = warbler (fun _ -> resource.Reset () |> JSON)
   let handlePost = request (fun r ->
     try
         let move = getResourceFromReq<Types.PlayMove> r
@@ -42,9 +43,10 @@ let rest resourceName resource =
     with _ -> JSON { error = "Bad request" }
   )
 
-  path resourcePath >=> choose [
+  path "/board" >=> choose [
     GET >=> handleGet
     POST >=> handlePost
+    DELETE >=> handleDelete
   ]
 
 

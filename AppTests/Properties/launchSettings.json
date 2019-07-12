@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Connect4.Tests": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Users\\Mathieu\\.nuget\\packages\\nunit.consolerunner\\3.10.0\\tools\\nunit3-console.exe",
+      "commandLineArgs": "Connect4.Tests.dll",
+      "workingDirectory": "C:\\Users\\Mathieu\\source\\repos\\connect4\\AppTests\\bin\\Debug\\netcoreapp2.0"
+    }
+  }
+}

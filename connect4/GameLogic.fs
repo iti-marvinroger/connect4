@@ -84,7 +84,7 @@ let private canAddPawnToColumn (board: Board) (x: int) =
     let column = getColumn board x
     column.[0] = None
 
-let addPawnToColumn (state: GameState) (move: PlayMove) =
+let addPawnToColumn (move: PlayMove) (state: GameState) =
     match move.column < 0 || move.column > (countColumns state.board) - 1 with
     | true -> raise (BadMoveException "This column does not exist")
     | _ -> ()
@@ -117,31 +117,10 @@ let addPawnToColumn (state: GameState) (move: PlayMove) =
         traverse 0
     | false -> raise (BadMoveException "This move is not possible")
 
-// let addAndLog (column: int) (pawn: Pawn) (board: Board) =
-//     let board, won = GameLogic.addPawnToColumn board column pawn
-//     match won with
-//     | true -> printfn "Won"
-//     | false -> printfn "-"
 
-//     board
 
-// printfn "Check column"
-// GameLogic.initializeBoard 7 6
-//     |> addAndLog 1 Red
-//     |> addAndLog 1 Red
-//     |> addAndLog 1 Red
-//     |> addAndLog 1 Red
-    
-// printfn "Check row"
-// GameLogic.initializeBoard 7 6
-//     |> addAndLog 1 Red
-//     |> addAndLog 2 Red
-//     |> addAndLog 3 Red
-//     |> addAndLog 4 Red
 
-// printfn "Check diagonal"
-// GameLogic.initializeBoard 7 6
-//     |> addAndLog 1 Red
-//     |> addAndLog 2 Yellow |> addAndLog 2 Red
-//     |> addAndLog 3 Yellow |> addAndLog 3 Yellow |> addAndLog 3 Red
-//     |> addAndLog 4 Yellow |> addAndLog 4 Yellow |> addAndLog 4 Yellow |> addAndLog 4 Red
+
+
+
+
