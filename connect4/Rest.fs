@@ -4,9 +4,7 @@ open Newtonsoft.Json
 open Newtonsoft.Json.Serialization
 open Suave
 open Suave.Operators
-open Suave.Http
 open Suave.Successful
-open Suave.RequestErrors
 open Suave.Filters
 
 type RestActions = {

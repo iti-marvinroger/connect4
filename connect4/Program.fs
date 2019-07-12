@@ -2,8 +2,8 @@ open Connect4
 
 open System
 open Suave
-open Suave.Successful
-open Connect4.Data
+
+open Connect4.Rest
 
 [<EntryPoint>]
 let main argv =
@@ -12,9 +12,12 @@ let main argv =
     Play = fun move ->
         let storedGameState = Data.getState ()
 
-        let newGameState = GameLogic.addPawnToColumn storedGameState move
+        try
+            let newGameState = GameLogic.addPawnToColumn storedGameState move
 
-        Data.setState newGameState
+            Data.setState newGameState
+        with
+            | :? GameLogic.BadMoveException as ex -> storedGameState
   }
 
   startWebServer defaultConfig boardWebPart
