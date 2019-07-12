@@ -45,7 +45,7 @@ let rest resource =
   )
 
   let setCORSHeaders =
-    addHeader  "Access-Control-Allow-Origin" "*" 
+    addHeader  "Access-Control-Allow-Origin" "http://localhost:8000" 
     >=> addHeader "Access-Control-Allow-Headers" "content-type" 
     >=> addHeader "Access-Control-Allow-Methods" "GET,OPTIONS,POST,DELETE" 
 
