@@ -93,7 +93,6 @@ let addPawnToColumn (state: GameState) (move: PlayMove) =
     | false -> raise (BadMoveException "The game is over")
     | _ -> ()
 
-
     match state.lastPlayer = move.pawn with
     | true -> raise (BadMoveException "The player cannot play twice")
     | _ -> ()
