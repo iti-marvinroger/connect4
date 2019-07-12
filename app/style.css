@@ -1,12 +1,45 @@
+html, body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.buttons {
+    display: flex;
+}
+
+.buttons button {
+    width: 100px;
+    padding: 10px;
+}
+
+.column {
+    background-color: #002AE0;
+}
+
 .column div {
     height: 100px;
     width: 100px;
-    border: 1px solid black;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.PlayerOne {
-    background-color: red;
+.column div li {
+    content: open-quote;
+    width: 80px !important;
+    height: 80px;
+    background-color: #fff;
+    border-radius: 50%;
+    list-style: none;
+    border: 6px solid rgb(0, 26, 139);
 }
-.PlayerTwo {
-    background-color: yellow;
+
+.PlayerOne li {
+    background-color: #FF0000 !important;
+}
+.PlayerTwo li {
+    background-color: #FFAE00 !important;
 }

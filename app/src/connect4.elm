@@ -103,7 +103,7 @@ view model =
                                                 class (caseString n)
                                               ]
                                               [ 
-                                                text (caseString n)
+                                                li [] []
                                               ]) l)
                                           
           ) model.board)
