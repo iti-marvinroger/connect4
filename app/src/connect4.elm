@@ -1,6 +1,7 @@
 import Browser
-import Array
+import List
 import Html exposing (..)
+import List.Extra exposing (..)
 import Html.Attributes exposing (..)
 import Html.Events exposing (onClick)
 
@@ -17,21 +18,21 @@ main =
 type alias Model = 
   {
     buttons : List Int,
-    board : List (List Case)
+    board : List (List CaseState)
   }
 
 init : Model
 init =
   Model
-  [1, 2, 3, 4, 5, 6, 7] 
+  [0, 1, 2, 3, 4, 5, 6] 
   [
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }],
-    [{ state = Empty, id =  2 }, { state = PlayerOne, id =  2 }, { state = PlayerTwo, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }, { state = Empty, id =  2 }]
+    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ Empty, Empty, Empty, Empty, Empty, Empty ],
+    [ Empty, Empty, Empty, Empty, Empty, Empty ]
   ]
 
 -- UPDATE
@@ -45,7 +46,7 @@ type alias Case =
   , id : Int
   }
 
-type CaseState 
+type CaseState
   = Empty
   | PlayerOne
   | PlayerTwo
@@ -54,8 +55,23 @@ update : Msg -> Model -> Model
 update msg model =
   case msg of
     AddPawn id ->
-      model
-
+      case List.Extra.getAt id model.board of
+        Just h ->
+          case List.head h of
+            Just t ->
+              case t of
+                Empty ->
+                  Debug.log(String.fromInt(id))
+                  model
+                PlayerOne ->
+                  model
+                PlayerTwo ->
+                  model
+            Nothing ->
+              model
+        Nothing -> 
+          model
+        
 -- VIEW   
 
 view : Model -> Html Msg
@@ -71,12 +87,12 @@ view model =
         (List.map (\l -> div 
                             [ class "column" ]
                             (List.map(\n -> div
-                                              [ if n.state == Empty then
+                                              [ if n == Empty then
                                                   class "E"
                                                 else
                                                   class "N"
                                               ]
-                                              [ if n.state == Empty then
+                                              [ if n == Empty then
                                                   text "E"
                                                 else
                                                   text "N"
