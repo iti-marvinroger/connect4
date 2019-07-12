@@ -1,14 +1,20 @@
 module Connect4.Types
 
+open Newtonsoft.Json
+open Newtonsoft.Json.FSharp.Idiomatic
+
 type Position = int * int
 
+[<JsonConverter(typeof<SingleCaseDuConverter>)>]
 type Pawn = 
     | Red
     | Yellow
-type BoardCell = Option<Pawn>
+    | None
+type BoardCell = Pawn
 type BoardColumn = array<BoardCell>
 type Board = array<BoardColumn>
 
+[<JsonConverter(typeof<SingleCaseDuConverter>)>]
 type GameStatus =
     | Ongoing
     | Won
@@ -17,7 +23,7 @@ type GameStatus =
 type GameState = {
     status: GameStatus;
     board: Board;
-    lastPlayer: Option<Pawn>
+    lastPlayer: Pawn
 }
 
 type PlayMove = {

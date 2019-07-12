@@ -11,13 +11,9 @@ let main argv =
     Get = fun () -> Data.getState ()
     Play = fun move ->
         let storedGameState = Data.getState ()
+        let newGameState = GameLogic.addPawnToColumn storedGameState move
 
-        try
-            let newGameState = GameLogic.addPawnToColumn storedGameState move
-
-            Data.setState newGameState
-        with
-            | :? GameLogic.BadMoveException as ex -> storedGameState
+        Data.setState newGameState
   }
 
   startWebServer defaultConfig boardWebPart
