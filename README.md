@@ -31,3 +31,16 @@ The return value is the same as `GET`.
 Reset the game. No payload.
 
 The return value is the same as `GET`.
+
+## Build and run front app
+
+### Build
+
+```
+cd frontend/app
+elm make src/connect4.elm --output=elm.js
+``` 
+
+### Run
+
+Open the `index.html` file which includes CSS in your browser.
